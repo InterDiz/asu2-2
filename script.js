@@ -37,8 +37,9 @@ function gameStep() {
     x: snake[0].x + direction.x,
     y: snake[0].y + direction.y
   };
+  const ateFood = head.x === food.x && head.y === food.y;
 
-  if (isGameOver(head)) {
+  if (isGameOver(head, ateFood)) {
     clearInterval(timer);
     alert('Игра окончена! Счет: ' + score);
     return;
@@ -46,7 +47,7 @@ function gameStep() {
 
   snake.unshift(head);
 
-  if (head.x === food.x && head.y === food.y) {
+  if (ateFood) {
     score++;
     scoreElement.textContent = score;
     placeFood();
@@ -57,9 +58,10 @@ function gameStep() {
   drawGame();
 }
 
-function isGameOver(head) {
+function isGameOver(head, ateFood) {
   const hitWall = head.x < 0 || head.x >= cellCount || head.y < 0 || head.y >= cellCount;
-  const hitSnake = snake.some(part => part.x === head.x && part.y === head.y);
+  const snakeBody = ateFood ? snake : snake.slice(0, -1);
+  const hitSnake = snakeBody.some(part => part.x === head.x && part.y === head.y);
 
   return hitWall || hitSnake;
 }
